@@ -11,6 +11,8 @@ services:
         value: 22
       - key: FACILITATOR_URL
         value: https://facilitator.goplausible.xyz
+      - key: ALGORAND_NETWORK
+        value: testnet
       - key: INDEXER_URL
         value: https://testnet-idx.algonode.cloud
       - key: TINYMAN_ANALYTICS_URL

@@ -3,7 +3,7 @@ import { setDefaultResultOrder } from "node:dns";
 import { fileURLToPath } from "node:url";
 import express from "express";
 import { HTTPFacilitatorClient, x402ResourceServer } from "@x402/core/server";
-import { USDC_TESTNET_ASA_ID } from "@x402/avm";
+import { USDC_MAINNET_ASA_ID, USDC_TESTNET_ASA_ID } from "@x402/avm";
 import { ExactAvmScheme } from "@x402/avm/exact/server";
 import { paymentMiddleware } from "@x402/express";
 import { declareDiscoveryExtension } from "@x402/extensions";
@@ -17,14 +17,21 @@ const app = express();
 const port = Number(process.env.PORT || 4021);
 const payTo = process.env.AVM_ADDRESS || "";
 const facilitatorUrl = process.env.FACILITATOR_URL || "https://facilitator.goplausible.xyz";
-const indexerUrl = (process.env.INDEXER_URL || "https://testnet-idx.algonode.cloud").replace(/\/$/, "");
-const tinymanUrl = (process.env.TINYMAN_ANALYTICS_URL || "https://testnet.analytics.tinyman.org/api/v1").replace(/\/$/, "");
-// Use the full CAIP-2 identifier advertised by GoPlausible. Some SDK versions
-// expose a shortened constant that the facilitator does not recognize.
-const testnetNetwork = "algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=";
+const algorandNetwork = (process.env.ALGORAND_NETWORK || "testnet").toLowerCase();
+if (!["testnet", "mainnet"].includes(algorandNetwork)) {
+  throw new Error("ALGORAND_NETWORK must be either testnet or mainnet.");
+}
+const isMainnet = algorandNetwork === "mainnet";
+const networkName = isMainnet ? "Algorand Mainnet" : "Algorand Testnet";
+const avmNetwork = isMainnet
+  ? "algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8="
+  : "algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=";
+const usdcAssetId = isMainnet ? USDC_MAINNET_ASA_ID : USDC_TESTNET_ASA_ID;
+const indexerUrl = (process.env.INDEXER_URL || (isMainnet ? "https://mainnet-idx.algonode.cloud" : "https://testnet-idx.algonode.cloud")).replace(/\/$/, "");
+const tinymanUrl = (process.env.TINYMAN_ANALYTICS_URL || (isMainnet ? "https://mainnet.analytics.tinyman.org/api/v1" : "https://testnet.analytics.tinyman.org/api/v1")).replace(/\/$/, "");
 
 if (!/^[A-Z2-7]{58}$/.test(payTo)) {
-  throw new Error("AVM_ADDRESS must be a valid 58-character Algorand Testnet address.");
+  throw new Error(`AVM_ADDRESS must be a valid 58-character Algorand ${isMainnet ? "Mainnet" : "Testnet"} address.`);
 }
 
 app.use(express.json({ limit: "32kb" }));
@@ -113,10 +120,10 @@ const routes = {
   "POST /api/agent-preflight": {
     accepts: {
       scheme: "exact",
-      network: testnetNetwork,
+      network: avmNetwork,
       payTo,
       price: process.env.PREFLIGHT_PRICE || "$0.003",
-      extra: { asset: USDC_TESTNET_ASA_ID, decimals: 6, tag: "x402-global-challenge" },
+      extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
     description: "Algorand agent safety preflight returning an ALLOW, REVIEW, or BLOCK decision before a paid action.",
     mimeType: "application/json",
@@ -125,10 +132,10 @@ const routes = {
   "POST /api/verify-counterparty": {
     accepts: {
       scheme: "exact",
-      network: testnetNetwork,
+      network: avmNetwork,
       payTo,
       price: process.env.COUNTERPARTY_PRICE || "$0.001",
-      extra: { asset: USDC_TESTNET_ASA_ID, decimals: 6, tag: "x402-global-challenge" },
+      extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
     description: "Deterministic Algorand counterparty check for agents before they transfer assets or call a service.",
     mimeType: "application/json",
@@ -137,10 +144,10 @@ const routes = {
   "POST /api/verify-asset": {
     accepts: {
       scheme: "exact",
-      network: testnetNetwork,
+      network: avmNetwork,
       payTo,
       price: process.env.ASSET_PRICE || "$0.001",
-      extra: { asset: USDC_TESTNET_ASA_ID, decimals: 6, tag: "x402-global-challenge" },
+      extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
     description: "Algorand ASA and NFT verification with supply, control-address, and metadata checks.",
     mimeType: "application/json",
@@ -149,10 +156,10 @@ const routes = {
   "GET /api/wallet-risk/:address": {
     accepts: {
       scheme: "exact",
-      network: testnetNetwork,
+      network: avmNetwork,
       payTo,
       price: process.env.WALLET_RISK_PRICE || "$0.002",
-      extra: { asset: USDC_TESTNET_ASA_ID, decimals: 6, tag: "x402-global-challenge" },
+      extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
     description: "Algorand wallet and counterparty risk score based on account age, activity, assets, and recent transactions.",
     mimeType: "application/json",
@@ -161,10 +168,10 @@ const routes = {
   "GET /api/pool-health/:assetA/:assetB": {
     accepts: {
       scheme: "exact",
-      network: testnetNetwork,
+      network: avmNetwork,
       payTo,
       price: process.env.POOL_HEALTH_PRICE || "$0.005",
-      extra: { asset: USDC_TESTNET_ASA_ID, decimals: 6, tag: "x402-global-challenge" },
+      extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
     description: "Algorand DEX pool health including reserves, liquidity, price, and estimated execution risk when available.",
     mimeType: "application/json",
@@ -173,10 +180,10 @@ const routes = {
   "GET /api/nft-check/:assetId": {
     accepts: {
       scheme: "exact",
-      network: testnetNetwork,
+      network: avmNetwork,
       payTo,
       price: process.env.NFT_CHECK_PRICE || "$0.003",
-      extra: { asset: USDC_TESTNET_ASA_ID, decimals: 6, tag: "x402-global-challenge" },
+      extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
     description: "Algorand NFT authenticity check covering ASA existence, supply, manager controls, creator history, and metadata signals.",
     mimeType: "application/json",
@@ -242,7 +249,7 @@ async function getWalletRisk(address) {
     },
     observedTransactionCount: transactions.length,
     indexedAt: new Date().toISOString(),
-    network: "Algorand Testnet",
+    network: networkName,
   };
 }
 
@@ -255,7 +262,7 @@ async function getAssetCheck(assetId) {
   const assetResponse = await fetchJson(`${indexerUrl}/v2/assets/${assetId}`);
   const asset = assetResponse.asset;
   const params = asset.params || {};
-  const reasons = ["Asset exists on Algorand Testnet"];
+  const reasons = [`Asset exists on ${networkName}`];
   if (params.total === 1 && params.decimals === 0) reasons.push("Supply and decimals are consistent with a single-edition NFT");
   if (params.freeze || params.clawback) reasons.push("Asset retains freeze or clawback control");
   if (params.manager) reasons.push("Asset manager is still configured");
@@ -277,7 +284,7 @@ async function getAssetCheck(assetId) {
       freeze: params.freeze || null,
       clawback: params.clawback || null,
     },
-    network: "Algorand Testnet",
+    network: networkName,
   };
 }
 
@@ -296,11 +303,11 @@ function classifyRisk(score) {
 }
 
 app.get("/health", (_req, res) => {
-  res.json({ service: "algosentinel-api", status: "ok", network: "testnet", asset: USDC_TESTNET_ASA_ID });
+  res.json({ service: "algosentinel-api", status: "ok", network: algorandNetwork, asset: usdcAssetId });
 });
 
 app.get("/", (_req, res) => {
-  res.json({ service: "AlgoSentinel", network: "Algorand Testnet", routes: Object.keys(routes) });
+  res.json({ service: "AlgoSentinel", network: networkName, routes: Object.keys(routes) });
 });
 
 app.post("/api/verify-counterparty", async (req, res, next) => {
@@ -352,7 +359,7 @@ app.post("/api/agent-preflight", async (req, res, next) => {
       },
       counterparty: wallet.address,
       asset: asset ? { assetId: asset.assetId, authentic: asset.authentic, confidence: asset.confidence } : null,
-      network: "Algorand Testnet",
+      network: networkName,
       evaluatedAt: new Date().toISOString(),
     });
   } catch (error) {
@@ -394,7 +401,7 @@ app.get("/api/pool-health/:assetA/:assetB", async (req, res, next) => {
     }
     const pool = poolResponse.results?.[0] || poolResponse.pools?.[0];
     if (!pool) {
-      return res.status(404).json({ assetA, assetB, found: false, reason: "No indexed Tinyman pool found for this pair", network: "Algorand Testnet" });
+      return res.status(404).json({ assetA, assetB, found: false, reason: "No indexed Tinyman pool found for this pair", network: networkName });
     }
     res.json({
       assetA,
@@ -402,7 +409,7 @@ app.get("/api/pool-health/:assetA/:assetB", async (req, res, next) => {
       found: true,
       provider: "Tinyman Analytics",
       pool,
-      network: "Algorand Testnet",
+      network: networkName,
       indexedAt: new Date().toISOString(),
     });
   } catch (error) {
@@ -417,5 +424,5 @@ app.use((error, _req, res, _next) => {
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`AlgoSentinel API listening on http://localhost:${port}`);
-  console.log(`Network: Algorand Testnet | Facilitator: ${facilitatorUrl}`);
+  console.log(`Network: ${networkName} | Facilitator: ${facilitatorUrl}`);
 });

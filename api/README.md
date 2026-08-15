@@ -24,7 +24,7 @@ The original GET routes remain available as compatibility aliases:
 4. Fund the account with Testnet ALGO and USDC from the Algorand dispensers.
 5. Start the API with `npm.cmd run api:dev` from Windows Command Prompt.
 
-The public GoPlausible facilitator handles verification and settlement. The server uses Testnet CAIP-2 `algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=` and Testnet USDC ASA `10458941`.
+The public GoPlausible facilitator handles verification and settlement. Set `ALGORAND_NETWORK=testnet` for Testnet (`algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=`, USDC ASA `10458941`) or `ALGORAND_NETWORK=mainnet` for Mainnet (`algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=`, USDC ASA `31566704`).
 
 ## Test
 
@@ -40,4 +40,4 @@ The client wallet must hold Testnet ALGO for fees and Testnet USDC ASA `10458941
 
 ## Mainnet launch checklist
 
-Testnet proves the integration only. Before competition submission, use a separate Mainnet pay-to wallet, Mainnet USDC ASA `31566704`, the Mainnet CAIP-2 identifier, a deployed HTTPS API, and real external users. Do not use the Testnet address or asset configuration for the competition launch.
+Testnet proves the integration only. Before competition submission, use a separate Mainnet pay-to wallet, set `ALGORAND_NETWORK=mainnet`, use Mainnet USDC ASA `31566704`, the Mainnet CAIP-2 identifier, a deployed HTTPS API, and real external users. Do not use the Testnet address or asset configuration for the competition launch.

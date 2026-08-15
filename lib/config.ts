@@ -3,9 +3,9 @@ export const siteConfig = {
   name: "AlgoSentinel",
   tagline: "The safety decision layer for Algorand AI agents",
   apiBaseUrl: "https://api.blueprintstech.org",
-  repoUrl: "https://github.com/your-org/algo-analytics",
+  repoUrl: "https://github.com/Abdulazeez41/AlgoSentinel",
   bazaarUrl: "https://facilitator.goplausible.xyz/dashboard",
-  contactUrl: "https://x.com/your-handle",
+  contactUrl: "https://x.com/dulaz41",
 };
 
 export const endpoints = [
