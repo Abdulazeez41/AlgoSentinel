@@ -14,6 +14,9 @@ dotenv.config({ path: fileURLToPath(new URL("./.env", import.meta.url)) });
 setDefaultResultOrder("ipv4first");
 
 const app = express();
+// Render/Cloudflare terminate TLS before forwarding to Express. Trust the
+// first proxy so x402 resource metadata keeps the public HTTPS URL.
+app.set("trust proxy", 1);
 const port = Number(process.env.PORT || 4021);
 const payTo = process.env.AVM_ADDRESS || "";
 const facilitatorUrl = process.env.FACILITATOR_URL || "https://facilitator.goplausible.xyz";
