@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="bg" cx="20%" cy="20%" r="80%">
+      <stop offset="0" stop-color="#0B1420"/>
+      <stop offset=".72" stop-color="#05060A"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="96" cy="153" r="7" fill="#3DD9EB"/>
+  <text x="120" y="162" fill="#9AA3B2" font-family="Arial, sans-serif" font-size="26" letter-spacing="1">LIVE ON ALGORAND MAINNET</text>
+  <text x="80" y="280" fill="#F5F7FA" font-family="Arial, sans-serif" font-size="76" font-weight="700">Algo Analytics</text>
+  <text x="80" y="350" fill="#9AA3B2" font-family="Arial, sans-serif" font-size="34">Pay-per-call Algorand data for AI agents — from $0.02 / call</text>
+</svg>

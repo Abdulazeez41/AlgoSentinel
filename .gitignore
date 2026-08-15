@@ -1,0 +1,4 @@
+api/.env
+api/client.env
+api/client-mnemonic.txt
+api/server.log

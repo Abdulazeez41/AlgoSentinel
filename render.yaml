@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: algosentinel-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run api:start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: FACILITATOR_URL
+        value: https://facilitator.goplausible.xyz
+      - key: INDEXER_URL
+        value: https://testnet-idx.algonode.cloud
+      - key: TINYMAN_ANALYTICS_URL
+        value: https://testnet.analytics.tinyman.org/api/v1
+      - key: AVM_ADDRESS
+        sync: false
