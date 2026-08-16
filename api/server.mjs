@@ -17,6 +17,8 @@ const app = express();
 // Render/Cloudflare terminate TLS before forwarding to Express. Trust the
 // first proxy so x402 resource metadata keeps the public HTTPS URL.
 app.set("trust proxy", 1);
+const iconPath = fileURLToPath(new URL("../public/icon.svg", import.meta.url));
+app.get("/icon.svg", (_req, res) => res.sendFile(iconPath));
 const port = Number(process.env.PORT || 4021);
 const payTo = process.env.AVM_ADDRESS || "";
 const facilitatorUrl = process.env.FACILITATOR_URL || "https://facilitator.goplausible.xyz";
@@ -128,6 +130,9 @@ const routes = {
       price: process.env.PREFLIGHT_PRICE || "$0.003",
       extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
+    serviceName: "AlgoSentinel",
+    tags: ["Algorand", "Agent Security", "x402"],
+    iconUrl: "https://api.blueprintstech.org/icon.svg",
     description: "Algorand agent safety preflight returning an ALLOW, REVIEW, or BLOCK decision before a paid action.",
     mimeType: "application/json",
     extensions: preflightDiscovery,
@@ -140,6 +145,9 @@ const routes = {
       price: process.env.COUNTERPARTY_PRICE || "$0.001",
       extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
+    serviceName: "AlgoSentinel",
+    tags: ["Algorand", "Agent Security", "x402"],
+    iconUrl: "https://api.blueprintstech.org/icon.svg",
     description: "Deterministic Algorand counterparty check for agents before they transfer assets or call a service.",
     mimeType: "application/json",
     extensions: counterpartyDiscovery,
@@ -152,6 +160,9 @@ const routes = {
       price: process.env.ASSET_PRICE || "$0.001",
       extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
+    serviceName: "AlgoSentinel",
+    tags: ["Algorand", "Agent Security", "x402"],
+    iconUrl: "https://api.blueprintstech.org/icon.svg",
     description: "Algorand ASA and NFT verification with supply, control-address, and metadata checks.",
     mimeType: "application/json",
     extensions: assetDiscovery,
@@ -164,6 +175,9 @@ const routes = {
       price: process.env.WALLET_RISK_PRICE || "$0.002",
       extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
+    serviceName: "AlgoSentinel",
+    tags: ["Algorand", "Agent Security", "x402"],
+    iconUrl: "https://api.blueprintstech.org/icon.svg",
     description: "Algorand wallet and counterparty risk score based on account age, activity, assets, and recent transactions.",
     mimeType: "application/json",
     extensions: walletRiskDiscovery,
@@ -176,6 +190,9 @@ const routes = {
       price: process.env.POOL_HEALTH_PRICE || "$0.005",
       extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
+    serviceName: "AlgoSentinel",
+    tags: ["Algorand", "Agent Security", "x402"],
+    iconUrl: "https://api.blueprintstech.org/icon.svg",
     description: "Algorand DEX pool health including reserves, liquidity, price, and estimated execution risk when available.",
     mimeType: "application/json",
     extensions: poolHealthDiscovery,
@@ -188,6 +205,9 @@ const routes = {
       price: process.env.NFT_CHECK_PRICE || "$0.003",
       extra: { asset: usdcAssetId, decimals: 6, tag: "x402-global-challenge" },
     },
+    serviceName: "AlgoSentinel",
+    tags: ["Algorand", "Agent Security", "x402"],
+    iconUrl: "https://api.blueprintstech.org/icon.svg",
     description: "Algorand NFT authenticity check covering ASA existence, supply, manager controls, creator history, and metadata signals.",
     mimeType: "application/json",
     extensions: nftDiscovery,
